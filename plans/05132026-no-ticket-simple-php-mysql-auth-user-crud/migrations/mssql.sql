@@ -1,13 +1,18 @@
--- Microsoft SQL Server schema scaffold for Simple PHP MySQL Auth User CRUD
--- Included because structured plan rules require MSSQL, PostgreSQL, and Knex migration artifacts for DB changes.
+-- Microsoft SQL Server schema for Simple PHP MySQL Auth User CRUD
 
--- Tables:
--- users
---   id: integer primary key identity
---   name: required string, max 100
---   email: required unique string, max 150
---   password: required string containing password_hash() output
---   created_at: timestamp default current time
---   updated_at: timestamp default current time
+IF OBJECT_ID('dbo.users', 'U') IS NULL
+BEGIN
+  CREATE TABLE dbo.users (
+    id INT IDENTITY(1,1) NOT NULL,
+    name NVARCHAR(100) NOT NULL,
+    email NVARCHAR(150) NOT NULL,
+    password NVARCHAR(255) NOT NULL,
+    created_at DATETIME2 NOT NULL CONSTRAINT DF_users_created_at DEFAULT SYSUTCDATETIME(),
+    updated_at DATETIME2 NOT NULL CONSTRAINT DF_users_updated_at DEFAULT SYSUTCDATETIME(),
+    CONSTRAINT PK_users PRIMARY KEY (id),
+    CONSTRAINT UQ_users_email UNIQUE (email)
+  );
+END;
 
--- TODO: fill during execution if MSSQL support is required.
+-- Rollback:
+-- DROP TABLE IF EXISTS dbo.users;

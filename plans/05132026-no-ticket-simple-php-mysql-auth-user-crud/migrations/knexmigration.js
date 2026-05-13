@@ -1,21 +1,20 @@
-// Knex migration scaffold for Simple PHP MySQL Auth User CRUD.
-// Included because structured plan rules require MSSQL, PostgreSQL, and Knex migration artifacts for DB changes.
-
-/**
- * Tables:
- * users
- *   id: integer primary key
- *   name: required string, max 100
- *   email: required unique string, max 150
- *   password: required string containing password_hash() output
- *   created_at: timestamp default current time
- *   updated_at: timestamp default current time
- */
+// Knex migration for Simple PHP MySQL Auth User CRUD.
 
 exports.up = async function up(knex) {
-  // TODO: fill during execution if Knex support is required.
+  const exists = await knex.schema.hasTable('users');
+
+  if (!exists) {
+    await knex.schema.createTable('users', (table) => {
+      table.increments('id').primary();
+      table.string('name', 100).notNullable();
+      table.string('email', 150).notNullable().unique();
+      table.string('password', 255).notNullable();
+      table.timestamp('created_at').notNullable().defaultTo(knex.fn.now());
+      table.timestamp('updated_at').notNullable().defaultTo(knex.fn.now());
+    });
+  }
 };
 
 exports.down = async function down(knex) {
-  // TODO: fill during execution if Knex support is required.
+  await knex.schema.dropTableIfExists('users');
 };
