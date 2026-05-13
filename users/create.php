@@ -16,6 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = trim((string) ($_POST['name'] ?? ''));
     $email = trim((string) ($_POST['email'] ?? ''));
     $password = (string) ($_POST['password'] ?? '');
+    $confirmPassword = (string) ($_POST['confirm_password'] ?? '');
 
     if ($name === '') {
         $errors[] = 'Name is required.';
@@ -25,9 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors[] = 'A valid email is required.';
     }
 
-    if (strlen($password) < 6) {
-        $errors[] = 'Password must be at least 6 characters.';
-    }
+    $errors = array_merge($errors, validate_required_password_pair($password, $confirmPassword));
 
     if (!$errors) {
         try {
@@ -80,7 +79,21 @@ require __DIR__ . '/../includes/header.php';
             </div>
             <div class="mb-3">
                 <label class="form-label" for="password">Password</label>
-                <input class="form-control" id="password" name="password" type="password" minlength="6" required>
+                <div class="input-group">
+                    <input class="form-control" id="password" name="password" type="password" minlength="8" autocomplete="new-password" data-password-input required>
+                    <button class="btn btn-outline-secondary" type="button" data-toggle-password="password">Show</button>
+                </div>
+                <div class="password-meter mt-2" data-password-meter="password">
+                    <div class="password-meter-bar"></div>
+                </div>
+                <div class="form-text" data-password-meter-label="password">Use lowercase, uppercase, digit, symbol, and at least 8 characters.</div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="confirm_password">Confirm password</label>
+                <div class="input-group">
+                    <input class="form-control" id="confirm_password" name="confirm_password" type="password" minlength="8" autocomplete="new-password" required>
+                    <button class="btn btn-outline-secondary" type="button" data-toggle-password="confirm_password">Show</button>
+                </div>
             </div>
             <button class="btn btn-primary" type="submit">Create user</button>
         </form>

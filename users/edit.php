@@ -32,6 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = trim((string) ($_POST['name'] ?? ''));
     $email = trim((string) ($_POST['email'] ?? ''));
     $password = (string) ($_POST['password'] ?? '');
+    $confirmPassword = (string) ($_POST['confirm_password'] ?? '');
 
     if ($name === '') {
         $errors[] = 'Name is required.';
@@ -41,9 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors[] = 'A valid email is required.';
     }
 
-    if ($password !== '' && strlen($password) < 6) {
-        $errors[] = 'New password must be at least 6 characters.';
-    }
+    $errors = array_merge($errors, validate_optional_password_pair($password, $confirmPassword));
 
     if (!$errors) {
         try {
@@ -111,8 +110,21 @@ require __DIR__ . '/../includes/header.php';
             </div>
             <div class="mb-3">
                 <label class="form-label" for="password">New password</label>
-                <input class="form-control" id="password" name="password" type="password" minlength="6">
-                <div class="form-text">Leave blank to keep the current password.</div>
+                <div class="input-group">
+                    <input class="form-control" id="password" name="password" type="password" minlength="8" autocomplete="new-password" data-password-input>
+                    <button class="btn btn-outline-secondary" type="button" data-toggle-password="password">Show</button>
+                </div>
+                <div class="password-meter mt-2" data-password-meter="password">
+                    <div class="password-meter-bar"></div>
+                </div>
+                <div class="form-text" data-password-meter-label="password">Leave both password fields blank to keep the current password.</div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="confirm_password">Confirm new password</label>
+                <div class="input-group">
+                    <input class="form-control" id="confirm_password" name="confirm_password" type="password" minlength="8" autocomplete="new-password">
+                    <button class="btn btn-outline-secondary" type="button" data-toggle-password="confirm_password">Show</button>
+                </div>
             </div>
             <button class="btn btn-primary" type="submit">Save changes</button>
         </form>

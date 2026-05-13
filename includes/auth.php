@@ -77,6 +77,59 @@ function verify_csrf(): void
     }
 }
 
+function password_luds8_errors(string $password): array
+{
+    $errors = [];
+
+    if (strlen($password) < 8) {
+        $errors[] = 'Password must be at least 8 characters.';
+    }
+
+    if (!preg_match('/[a-z]/', $password)) {
+        $errors[] = 'Password must include a lowercase letter.';
+    }
+
+    if (!preg_match('/[A-Z]/', $password)) {
+        $errors[] = 'Password must include an uppercase letter.';
+    }
+
+    if (!preg_match('/[0-9]/', $password)) {
+        $errors[] = 'Password must include a digit.';
+    }
+
+    if (!preg_match('/[^A-Za-z0-9]/', $password)) {
+        $errors[] = 'Password must include a symbol.';
+    }
+
+    return $errors;
+}
+
+function validate_required_password_pair(string $password, string $confirmPassword): array
+{
+    $errors = password_luds8_errors($password);
+
+    if ($confirmPassword === '') {
+        $errors[] = 'Confirm password is required.';
+    } elseif (!hash_equals($password, $confirmPassword)) {
+        $errors[] = 'Password confirmation does not match.';
+    }
+
+    return $errors;
+}
+
+function validate_optional_password_pair(string $password, string $confirmPassword): array
+{
+    if ($password === '' && $confirmPassword === '') {
+        return [];
+    }
+
+    if ($password === '') {
+        return ['Password is required when confirm password is provided.'];
+    }
+
+    return validate_required_password_pair($password, $confirmPassword);
+}
+
 function set_flash(string $type, string $message): void
 {
     $_SESSION['flash'] = ['type' => $type, 'message' => $message];

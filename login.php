@@ -57,7 +57,10 @@ require __DIR__ . '/includes/header.php';
             </div>
             <div class="mb-3">
                 <label class="form-label" for="password">Password</label>
-                <input class="form-control" id="password" name="password" type="password" required>
+                <div class="input-group">
+                    <input class="form-control" id="password" name="password" type="password" required>
+                    <button class="btn btn-outline-secondary" type="button" data-toggle-password="password">Show</button>
+                </div>
             </div>
             <button class="btn btn-primary w-100" type="submit">Login</button>
         </form>
